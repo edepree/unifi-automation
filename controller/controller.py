@@ -8,7 +8,6 @@ class Controller:
         self.controller_url = f'https://{address}:{port}'
 
         self.session = requests.Session()
-
         self.headers = {'Content-Type': 'application/json'}
         
         # allow self signed certificates
@@ -19,9 +18,6 @@ class Controller:
         self.firewall_groups_url = f'{self.controller_url}/proxy/network/api/s/{site}/rest/firewallgroup'
 
     def __del__(self):
-        logging.debug('logging out')
-        self.logout()
-        logging.debug('closing session')
         self.session.close()
 
     def process_response(self, response):
@@ -58,10 +54,16 @@ class Controller:
 
         self.process_response(response)
 
-        return [x['name'] for x in response.json()['data'] if x['group_type'] == 'address-group']
+        output = {}
+
+        for group in response.json()['data']:
+            if group['group_type'] == 'address-group':
+                output[group['name']] = group['_id']
+
+        return output
     
-    def create_new_address_group(self, name, members):
-        logging.debug(f'adding the group {name}')
+    def create_address_group(self, name, members):
+        logging.debug(f'adding the group "{name}"')
 
         data = {'name': name,
                 'group_type': 'address-group',
@@ -70,5 +72,19 @@ class Controller:
         response = self.session.post(self.firewall_groups_url,
                                      headers=self.headers,
                                      data=json.dumps(data))
+        
+        self.process_response(response)
+
+    def update_address_group(self, id, name, members):
+        logging.debug(f'updating the group "{name}"')
+
+        data = {'name': name,
+                'group_type': 'address-group',
+                'group_members': members,
+                '_id': id}
+
+        response = self.session.put(f'{self.firewall_groups_url}/{id}',
+                                    headers=self.headers,
+                                    data=json.dumps(data))
         
         self.process_response(response)
