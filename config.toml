@@ -1,15 +1,27 @@
 [controller]
 address  = "192.168.1.1"
-port     = 443
+port = 443
 username = "automation"
-password = "REPLACE_ME"
-site     = "default"
+password = ""
+site = "default"
 
-[logging]
+[logging.console]
+enabled = true
 level = "DEBUG"
 
-[notifications.email]
-enabled = true
+[logging.file]
+enabled = false
+level = "INFO"
+
+[logging.email]
+enabled = false
+level = "WARN"
+smtp_server = "email-smtp.us-east-1.amazonaws.com"
+smtp_port = 587
+smtp_username = ""
+smtp_password = ""
+sender = ""
+recipients = [""]
 
 [isc-acls]
 enabled = true

@@ -8,6 +8,9 @@ class InternetStormCenter:
     def __init__(self,):
         self.base_url = 'https://isc.sans.edu/api'
 
+        # setup logging
+        self.logger = logging.getLogger('unifi-automation.internet_storm_center')
+
     def get_api_endpoint(self, endpoint):
         response = requests.get(f'{self.base_url}/{endpoint}?json')
         return self.process_response(response)
@@ -17,7 +20,7 @@ class InternetStormCenter:
         condense and convert them in CIDR block, and return addresses as either plain IPs (for /32)
         or network block with CIDR prefixes"""
 
-        logging.debug(f'ICS API HTTP Response: {response.status_code}')
+        self.logger.debug(f'ICS API HTTP Response: {response.status_code}')
 
         if response.status_code == requests.codes.ok:
             response_content = response.json()

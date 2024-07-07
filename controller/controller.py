@@ -2,7 +2,7 @@ import json
 import logging
 import requests
 
-class Controller:
+class UniFiController:
     def __init__(self, address, port, site):
         # base url
         self.controller_url = f'https://{address}:{port}'
@@ -17,12 +17,15 @@ class Controller:
         # reused api endpoint
         self.firewall_groups_url = f'{self.controller_url}/proxy/network/api/s/{site}/rest/firewallgroup'
 
+        # logging
+        self.logger = logging.getLogger('unifi-automation.controller')
+
     def __del__(self):
         self.session.close()
 
     def process_response(self, response):
         """A simple helper function for processing requests from the UniFi controller."""
-        logging.debug(f'UniFi Controller API HTTP Response: {response.status_code}')
+        self.logger.debug(f'UniFi Controller API HTTP Response: {response.status_code}')
 
         if response.status_code == requests.codes.ok:
             if response.headers.get('X-CSRF-Token'):
@@ -31,7 +34,7 @@ class Controller:
             raise
     
     def login(self, username, password):
-        logging.debug(f'authenticating to "{self.controller_url}" as "{username}"')
+        self.logger.debug(f'authenticating to "{self.controller_url}" as "{username}"')
 
         login_url = f'{self.controller_url}/api/auth/login'
 
@@ -63,7 +66,7 @@ class Controller:
         return output
     
     def create_address_group(self, name, members):
-        logging.debug(f'adding the group "{name}"')
+        self.logger.debug(f'adding the group "{name}"')
 
         data = {'name': name,
                 'group_type': 'address-group',
@@ -76,7 +79,7 @@ class Controller:
         self.process_response(response)
 
     def update_address_group(self, id, name, members):
-        logging.debug(f'updating the group "{name}"')
+        self.logger.debug(f'updating the group "{name}"')
 
         data = {'name': name,
                 'group_type': 'address-group',
