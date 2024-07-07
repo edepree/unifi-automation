@@ -1,0 +1,24 @@
+[controller]
+address  = "192.168.1.1"
+port     = 443
+username = "automation"
+password = "REPLACE_ME"
+site     = "default"
+
+[logging]
+level = "DEBUG"
+
+[notifications.email]
+enabled = true
+
+[isc-acls]
+enabled = true
+allowed = ["research", "torexit"]
+
+[isc-acls.research]
+name = "Dynamic - ISC Research Endpoints"
+endpoint = 'threatcategory/research'
+
+[isc-acls.torexit]
+name = "Dynamic - ISC TOR Exit Nodes"
+endpoint = 'threatlist/torexit'

@@ -5,16 +5,11 @@ from ipaddress import IPv4Address
 from ipaddress import collapse_addresses
 
 class InternetStormCenter:
-
     def __init__(self,):
-        pass
+        self.base_url = 'https://isc.sans.edu/api'
 
-    def get_threat_category(self, category):
-        response = requests.get(f'https://isc.sans.edu/api/threatcategory/{category}?json')
-        return self.process_response(response)
-    
-    def get_threat_list(self, list):
-        response = requests.get(f'https://isc.sans.edu/api/threatlist/{list}?json')
+    def get_api_endpoint(self, endpoint):
+        response = requests.get(f'{self.base_url}/{endpoint}?json')
         return self.process_response(response)
 
     def process_response(self, response):
